@@ -1,3 +1,5 @@
+##testing 
+
 ### In this script, we use the auk package to filter eBird checklists 
 ### down to only those that we can use to predict the distributions/
 ### relative abundances of focal taxa during the breeding season. Our 
@@ -42,7 +44,7 @@ ebd <- auk_ebd("ebd_indbun_relMar-2020.txt",
 
 ebd_filters <- ebd %>% 
   auk_species(species = c("Indigo Bunting")) %>%
-   ## restrict to the standard traveling and stationary count protocols
+  ## restrict to the standard traveling and stationary count protocols
   auk_protocol(protocol = c("Stationary", "Traveling")) %>%
   auk_date(date = c("*-06-01", "*-07-16")) %>% #June and July, but only up to July 16th as Lazuli Bunting departs breeding grounds in late July
   auk_last_edited(date = c("2010-01-01" , "2018-12-31")) %>% #2010 to 2018 just like he Justyn et al. paper
@@ -116,7 +118,7 @@ write.csv(indigo_bunting_pred, "indigo_bunting_pred_mx_half_july.csv", na = "", 
 # filtering checklists for second parental species -------------------------
 # filtering checklists for Lazuli Bunting
 ebd <- auk_ebd("ebd_lazbun_relMar-2020.txt", 
-              file_sampling = "ebd_sampling_relMar-2020.txt")
+               file_sampling = "ebd_sampling_relMar-2020.txt")
 
 ebd_filters <- ebd %>% 
   auk_species(species = c("Lazuli Bunting")) %>%
