@@ -21,10 +21,11 @@ library(tidyverse)
 library(auk)
 library(lubridate)
 
-# defining the directory for the eBird data
-ebd_dir <-"/Volumes/commons/CarlingLab/eBird Data/Data for looking at relative abundance"
-#ebd_dir <- "/pfs/tsfs1/gscratch/pdoughe1" # if doing on Teton
+setwd("/Volumes/project/CarlingLab/pdoughe1/Passerina_hybrid_zone_changes_parental_abudnance_estimation") # accessing eBird data in Alcova
 
+# defining the directory for the eBird data
+ebd_dir <-"/Volumes/project/CarlingLab/pdoughe1/Passerina_hybrid_zone_changes_parental_abudnance_estimation"
+#ebd_dir <- "/pfs/tsfs1/gscratch/pdoughe1" # if doing on Teton
 
 #=============================================================================================
 #     preparing eBird data
@@ -39,25 +40,32 @@ ebd_dir <-"/Volumes/commons/CarlingLab/eBird Data/Data for looking at relative a
 # filtering checklists for first parental species -------------------------
 # filtering checklists for Indigo Bunting
 
-ebd <- auk_ebd("ebd_indbun_relMar-2020.txt",
-               file_sampling = "ebd_sampling_relMar-2020.txt")
+ebd <- auk_ebd("ebd_indbun_relJul-2022/ebd_indbun_relJul-2022.txt",
+               file_sampling = "ebd_sampling_relJul-2022/ebd_sampling_relJul-2022.txt")
 
 ebd_filters <- ebd %>% 
   auk_species(species = c("Indigo Bunting")) %>%
   ## restrict to the standard traveling and stationary count protocols
   auk_protocol(protocol = c("Stationary", "Traveling")) %>%
   auk_date(date = c("*-06-01", "*-07-16")) %>% #June and July, but only up to July 16th as Lazuli Bunting departs breeding grounds in late July
-  auk_last_edited(date = c("2010-01-01" , "2018-12-31")) %>% #2010 to 2018 just like he Justyn et al. paper
+  #auk_last_edited(date = c("2010-01-01" , "2018-12-31")) %>% #we're keeping all years
   auk_country(country = c("United States", "Canada", "Mexico")) %>%
   auk_complete()
 ebd_filters # viewing the filters
 
 ## merging eBird and sampling data for one species at a time
-f_ebd <- file.path(ebd_dir, "ebd_indigo_bunting.txt")
-f_sampling <- file.path(ebd_dir, "ebd_indigo_bunting_sampling.txt")
+data_dir <- "zero_filled_checklists"
+if (!dir.exists(data_dir)) {
+  dir.create(data_dir)
+}
+
+f_ebd <- file.path(data_dir, "ebd_indigo_bunting.txt")
+f_sampling <- file.path(data_dir, "ebd_indigo_bunting_sampling.txt")
 
 ## filtering the zero-filled data, only run if the files don't already exist,
-auk_filter(ebd_filters, file = f_ebd, file_sampling = f_sampling, overwrite = TRUE)
+if (!file.exists(f_ebd)) {
+  auk_filter(ebd_filters, file = f_ebd, file_sampling = f_sampling)
+}
 
 #reading in zero-filled data into R
 if (!exists("indigo_bunting_zf")) {
@@ -94,8 +102,6 @@ indigo_zf_filtered <- indigo_bunting_zf %>%
     # effort filters
     duration_minutes <= 5 * 60,
     effort_distance_km <= 5,
-    # last 10 years of data
-    year >= 2010,
     # 10 or fewer observers
     number_observers <= 10)
 
@@ -112,30 +118,33 @@ indigo_bunting_pred <- indigo_zf_filtered %>%
          number_observers)
 
 ## saving to csv file
-write.csv(indigo_bunting_pred, "indigo_bunting_pred_mx_half_july.csv", na = "", row.names=FALSE)
+write.csv(indigo_bunting_pred, "zero_filled_checklists/indigo_bunting_zf.csv", na = "", row.names=FALSE)
 
 
 # filtering checklists for second parental species -------------------------
 # filtering checklists for Lazuli Bunting
-ebd <- auk_ebd("ebd_lazbun_relMar-2020.txt", 
-               file_sampling = "ebd_sampling_relMar-2020.txt")
+ebd <- auk_ebd("ebd_lazbun_relJul-2022/ebd_lazbun_relJul-2022.txt",
+               file_sampling = "ebd_sampling_relJul-2022/ebd_sampling_relJul-2022.txt")
+
 
 ebd_filters <- ebd %>% 
   auk_species(species = c("Lazuli Bunting")) %>%
   ## restrict to the standard traveling and stationary count protocols
   auk_protocol(protocol = c("Stationary", "Traveling")) %>%
   auk_date(date = c("*-06-01", "*-07-16")) %>% #June and July, only up to July 16th
-  auk_last_edited(date = c("2010-01-01" , "2018-12-31")) %>%
+  #auk_last_edited(date = c("2010-01-01" , "2018-12-31")) %>%
   auk_country(country = c("United States", "Canada", "Mexico")) %>%
   auk_complete()
 ebd_filters # viewing the filters
 
 ## merging eBird and sampling data for one species at a time
-f_ebd <- file.path(ebd_dir, "ebd_lazuli_bunting.txt")
-f_sampling <- file.path(ebd_dir, "ebd_lazuli_bunting_sampling.txt")
+f_ebd <- file.path(data_dir, "ebd_lazuli_bunting.txt")
+f_sampling <- file.path(data_dir, "ebd_lazuli_bunting_sampling.txt")
 
 ## filtering the zero-filled data, only run if the files don't already exist,
-auk_filter(ebd_filters, file = f_ebd, file_sampling = f_sampling, overwrite = TRUE)
+if (!file.exists(f_ebd)) {
+  auk_filter(ebd_filters, file = f_ebd, file_sampling = f_sampling)
+}
 
 #reading in zero-filled data into R
 if (!exists("lazuli_bunting_zf")) {
@@ -167,8 +176,6 @@ lazuli_zf_filtered <- lazuli_bunting_zf %>%
     # effort filters
     duration_minutes <= 5 * 60,
     effort_distance_km <= 5,
-    # last 10 years of data
-    year >= 2010,
     # 10 or fewer observers
     number_observers <= 10)
 
@@ -185,4 +192,4 @@ lazuli_bunting_pred <- lazuli_zf_filtered %>%
          number_observers)
 
 ## saving to csv file
-write.csv(lazuli_bunting_pred, "lazuli_bunting_pred_mx_half_july.csv", na = "", row.names=FALSE)
+write.csv(lazuli_bunting_pred, "zero_filled_checklists/lazuli_bunting_zf.csv", na = "", row.names=FALSE)
