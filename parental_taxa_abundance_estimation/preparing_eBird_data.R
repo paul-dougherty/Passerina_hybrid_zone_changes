@@ -106,7 +106,7 @@ indigo_zf_filtered <- indigo_bunting_zf %>%
     number_observers <= 10)
 
 # filtering down to relevant variables
-indigo_bunting_pred <- indigo_zf_filtered %>% 
+inbu_pred <- indigo_zf_filtered %>% 
   select(checklist_id, observer_id, sampling_event_identifier,
          scientific_name,
          observation_count, species_observed, 
@@ -118,7 +118,18 @@ indigo_bunting_pred <- indigo_zf_filtered %>%
          number_observers)
 
 ## saving to csv file
-write.csv(indigo_bunting_pred, "zero_filled_checklists/indigo_bunting_zf.csv", na = "", row.names=FALSE)
+#write.csv(inbu_pred, "zero_filled_checklists/indigo_bunting_zf.csv", na = "", row.names=FALSE)
+
+## saving a csv file for each year separately
+inbu_yes <- inbu_pred %>% 
+  filter(species_observed == TRUE)
+
+# for every year, filter dataset down to checklists for each year
+for(i in unique(inbu_yes$year)){
+  year_data <- inbu_pred %>% 
+    filter(year==i)
+  write_csv(year_data, paste0("zero_filled_checklists/indigo_bunting_years/indigo_bunting_zf_",i,".csv"))
+}
 
 
 # filtering checklists for second parental species -------------------------
@@ -180,7 +191,7 @@ lazuli_zf_filtered <- lazuli_bunting_zf %>%
     number_observers <= 10)
 
 # filtering down to relevant variables
-lazuli_bunting_pred <- lazuli_zf_filtered %>% 
+lazb_pred <- lazuli_zf_filtered %>% 
   select(checklist_id, observer_id, sampling_event_identifier,
          scientific_name,
          observation_count, species_observed, 
@@ -192,4 +203,21 @@ lazuli_bunting_pred <- lazuli_zf_filtered %>%
          number_observers)
 
 ## saving to csv file
-write.csv(lazuli_bunting_pred, "zero_filled_checklists/lazuli_bunting_zf.csv", na = "", row.names=FALSE)
+#write.csv(lazb_pred, "zero_filled_checklists/lazuli_bunting_zf.csv", na = "", row.names=FALSE)
+
+## saving a csv file for each year separately
+lazb_yes <- lazb_pred %>% 
+  filter(species_observed == TRUE)
+
+# for every year, filter dataset down to checklists for each year
+for(i in unique(lazb_yes$year)){
+  year_data <- lazb_pred %>% 
+    filter(year==i)
+  write_csv(year_data, paste0("zero_filled_checklists/lazuli_bunting_years/lazuli_bunting_zf_",i,".csv"))
+}
+
+## lastly, checking to make sure that all the years in the Lazuli Bunting datasets 
+## are also represented in the Indigo Bunting dataset (if so, then we don't need to 
+##load habitat data for any of the Lazuli Bunting year datasets)
+
+unique(lazb_yes$year) %in% unique(inbu_yes$year) # looks good!

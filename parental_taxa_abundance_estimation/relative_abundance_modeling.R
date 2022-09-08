@@ -26,7 +26,7 @@ library(tidyverse)
 
 select <- dplyr::select
 
-setwd("/Volumes/commons/CarlingLab/eBird Data/Data for looking at relative abundance")
+setwd("/Volumes/project/CarlingLab/eBird Data/Data for looking at relative abundance")
 
 # set random number seed to ensure fully repeatable results
 set.seed(1)

@@ -1,5 +1,5 @@
 ### In this script, we prepare datasets for modeling the relative abundances of 
-### two parental species. First, we calculate habitat, elevation,
+### two parental species in each year. First, we calculate habitat, elevation,
 ### and bioclim variables for all checklists in the eBird dataset. We then 
 ### generate a prediction surface of these variables for North America. Before 
 ### running this script, you need to filter the prepare the eBird data with the 
@@ -29,13 +29,26 @@ projection <- raster::projection
 #     loading filtered and zero-filled eBird data
 #=============================================================================================
 
-setwd("/Volumes/commons/CarlingLab/eBird Data/Data for looking at relative abundance")
+setwd("/Volumes/project/CarlingLab/pdoughe1/Passerina_hybrid_zone_changes_parental_abudnance_estimation") # accessing eBird data in Alcova
 
-## for this project, we filtered down to all checklists submitted in Canada, US, and Mexico from June 1st to July 16th
+## for this project, we've already filtered down to all checklists submitted in Canada, US, and Mexico from June 1st to July 16th
 ## Note: because the eBird data for our three taxa of interest have already been zero-filled, the locality data
 ## for each should be identical. Therefore, we can generate habitat, elevation, and bioclim data for checklist 
 ## locations for only one dataset. Here, I'll do it for the Indigo Bunting data
-ebird <- read.csv("indigo_bunting_pred_mx_half_july.csv", header = TRUE)
+
+
+### need to read in the csv for each year separately
+
+files <- list.files(path = "zero_filled_checklists/indigo_bunting_years", pattern = ".csv")
+files <- paste0("zero_filled_checklists/indigo_bunting_years/",files)
+
+# creating a list of all the csv files
+years = lapply(files, read_csv)
+
+
+
+
+#ebird <- read.csv("indigo_bunting_pred_mx_half_july.csv", header = TRUE)
 
 
 #=============================================================================================
