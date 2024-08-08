@@ -1,6 +1,6 @@
 # Passerina_hybrid_zone_changes
 
-Script for Dougherty et al. 2024, "Go west, young bunting, climate change drives rapid movement in a Great Plains hybrid zone"
+Scripts for Dougherty et al. 2024, "Go west, young bunting, climate change drives rapid movement in a Great Plains hybrid zone"
 
 All sequence reads used in the study are available at the NCBI Sequence Read Archive (PRJNA1137379).
 
